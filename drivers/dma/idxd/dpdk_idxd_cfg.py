@@ -24,7 +24,7 @@ class SysfsDir:
         if SysfsDir.verbose:
             print(f"Reading '{filename}' in {self.path}")
         with open(os.path.join(self.path, filename)) as f:
-            return int(f.readline())
+            return int(f.readline(5_000_000))
 
     def write_values(self, values):
         "write dictionary, where key is filename and value is value to write"
