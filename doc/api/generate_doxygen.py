@@ -4,13 +4,14 @@
 # (c) 2022 Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
 
 import os, re, subprocess, sys
+from security import safe_command
 
 pattern = re.compile('^Preprocessing (.*)...$')
 out_dir, *doxygen_command = sys.argv[1:]
 out_file = os.path.join(out_dir + '.out')
 dep_file = f'{out_dir}.d'
 with open(out_file, 'w') as out:
-    subprocess.run(doxygen_command, check=True, stdout=out)
+    safe_command.run(subprocess.run, doxygen_command, check=True, stdout=out)
 with open(out_file) as out, open(dep_file, 'w') as dep:
     print(f'{out_dir}:', end=' ', file=dep)
     for line in sorted(out):

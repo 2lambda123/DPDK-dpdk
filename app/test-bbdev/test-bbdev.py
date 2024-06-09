@@ -10,6 +10,7 @@ import subprocess
 import shlex
 
 from threading import Timer
+from security import safe_command
 
 def kill(process):
     print("ERROR: Test app timed out")
@@ -112,7 +113,7 @@ for vector in args.test_vector:
 
         print("Executing: {}".format(params_string))
         try:
-            output = subprocess.run(call_params, timeout=args.timeout, universal_newlines=True)
+            output = safe_command.run(subprocess.run, call_params, timeout=args.timeout, universal_newlines=True)
         except subprocess.TimeoutExpired as e:
             print("Starting Test Suite : BBdev TimeOut Tests")
             print("== test: timeout")

@@ -8,6 +8,7 @@ import os
 from os.path import join
 from subprocess import run, PIPE, STDOUT
 from packaging.version import Version
+from security import safe_command
 
 # assign parameters to variables
 (sphinx, version, src, dst, *extra_args) = sys.argv[1:]
@@ -16,7 +17,7 @@ from packaging.version import Version
 os.environ['DPDK_VERSION'] = version
 
 # for sphinx version >= 1.7 add parallelism using "-j auto"
-ver = run([sphinx, '--version'], stdout=PIPE,
+ver = safe_command.run(run, [sphinx, '--version'], stdout=PIPE,
           stderr=STDOUT).stdout.decode().split()[-1]
 sphinx_cmd = [sphinx] + extra_args
 if Version(ver) >= Version('1.7'):
@@ -29,7 +30,7 @@ for root, dirs, files in os.walk(src):
 
 # run sphinx, putting the html output in a "html" directory
 with open(join(dst, 'sphinx_html.out'), 'w') as out:
-    process = run(sphinx_cmd + ['-b', 'html', src, join(dst, 'html')],
+    process = safe_command.run(run, sphinx_cmd + ['-b', 'html', src, join(dst, 'html')],
                   stdout=out)
 
 # create a gcc format .d file giving all the dependencies of this doc build
