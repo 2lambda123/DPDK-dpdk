@@ -24,6 +24,7 @@ from subprocess import SubprocessError
 from scapy.packet import Packet  # type: ignore[import]
 
 from .exception import ConfigurationError
+from security import safe_command
 
 REGEX_FOR_PCI_ADDRESS: str = "/[0-9a-fA-F]{4}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}.[0-9]{1}/"
 
@@ -209,8 +210,7 @@ class DPDKGitTarball(object):
 
         atexit.register(self._delete_tarball)
 
-        result = subprocess.run(
-            'git -C "$(git rev-parse --show-toplevel)" archive '
+        result = safe_command.run(subprocess.run, 'git -C "$(git rev-parse --show-toplevel)" archive '
             f'{self._git_ref} --prefix="dpdk-tarball-{self._git_ref + os.sep}" | '
             f"{self._tar_compression_format} > {Path(self._tarball_path.absolute())}",
             shell=True,

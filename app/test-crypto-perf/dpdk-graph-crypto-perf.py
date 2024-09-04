@@ -19,6 +19,7 @@ from argparse import ArgumentDefaultsHelpFormatter
 import img2pdf
 import pandas as pd
 import plotly.express as px
+from security import safe_command
 
 SCRIPT_PATH = os.path.dirname(__file__) + "/"
 GRAPH_DIR = "temp_graphs"
@@ -160,7 +161,7 @@ def create_results_pdf(graph_path, pdf_path):
 
 def run_test(test_cmd, test, grapher, params, verbose):
     """Run performance test app for the given test case parameters."""
-    process = subprocess.Popen(["stdbuf", "-oL", test_cmd] + params,
+    process = safe_command.run(subprocess.Popen, ["stdbuf", "-oL", test_cmd] + params,
                                universal_newlines=True,
                                stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT)
